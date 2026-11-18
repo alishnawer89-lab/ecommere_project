@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Fit Verse</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --sidebar: #18181a;
+            --sidebar-hover: #26262a;
+            --bg: #efefef;
+            --card: #ffffff;
+            --ink: #18181a;
+            --muted: #77777c;
+            --line: #e6e6e8;
+            --soft: #f4f4f5;
+            --danger: #c0392b;
+            --success: #1e7a46;
+            --radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        /* ---------- LAYOUT ---------- */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar);
+            color: #fff;
+            padding: 36px 20px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 0 10px 36px;
+        }
+
+        .brand svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 16px;
+            border-radius: 14px;
+            color: #9a9aa0;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 12px;
+            bottom: 12px;
+            width: 5px;
+            background: #fff;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Add Product link: sirf Add Product page khulne par dikhta hai */
+        .nav-item.nav-hidden {
+            display: none;
+        }
+
+        .badge {
+            margin-left: auto;
+            background: #4a4a50;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 7px;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: #2e2e32;
+            margin: 14px 10px;
+        }
+
+        .nav-bottom {
+            margin-top: auto;
+            padding-top: 10px;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* ---------- TOPBAR ---------- */
+        .topbar {
+            background: #fff;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .topbar h1 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .topbar p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--soft);
+            border-radius: 30px;
+            padding: 0 18px;
+            height: 46px;
+            width: 260px;
+            color: var(--muted);
+        }
+
+        .search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            width: 100%;
+            color: var(--ink);
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--ink);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .avatar.sm {
+            width: 38px;
+            height: 38px;
+            font-size: 14px;
+            background: #4a4a50;
+        }
+
+        /* ---------- CONTENT ---------- */
+        .content {
+            padding: 40px 50px 60px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .alert.success {
+            background: #e3f4ea;
+            color: var(--success);
+        }
+
+        .alert.error {
+            background: #fbeae8;
+            color: var(--danger);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .stat {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 26px;
+        }
+
+        .stat.dark {
+            background: var(--sidebar);
+            color: #fff;
+        }
+
+        .stat-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 26px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat.dark .stat-icon {
+            background: #38383d;
+        }
+
+        .stat-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .stat.dark .stat-sub {
+            color: #a5a5ab;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 30px;
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .card-head h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .card-head small {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .head-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ---------- TABLES ---------- */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .thumb {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: var(--soft);
+            display: block;
+        }
+
+        .pname {
+            font-weight: 600;
+            max-width: 340px;
+        }
+
+        .price {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .cell-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--soft);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 34px 14px;
+        }
+
+        /* ---------- BUTTONS & FORMS ---------- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--ink);
+            color: #fff;
+            border: 1px solid var(--ink);
+            padding: 12px 22px;
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #36363b;
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn.light {
+            background: #fff;
+            color: var(--ink);
+            border-color: #cfcfd3;
+            padding: 10px 18px;
+            font-size: 13px;
+        }
+
+        .btn.light:hover {
+            background: var(--soft);
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid #e6b9b3;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="password"],
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--soft);
+            border: 1px solid transparent;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--ink);
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            background: #fff;
+            border-color: var(--ink);
+        }
+
+        .pill-select {
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink);
+            background: #fff;
+            border: 1px solid #cfcfd3;
+            border-radius: 30px;
+            padding: 9px 16px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .upload-box {
+            border: 2px dashed #d3d3d7;
+            border-radius: 20px;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            background: #fafafa;
+        }
+
+        .upload-box img {
+            display: none;
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: 14px;
+            object-fit: contain;
+        }
+
+        .upload-box input[type="file"] {
+            font-family: inherit;
+            font-size: 13px;
+            max-width: 100%;
+        }
+
+        /* ---------- CHART ---------- */
+        .seg {
+            display: inline-flex;
+            background: var(--soft);
+            border-radius: 30px;
+            padding: 4px;
+        }
+
+        .seg button {
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            padding: 8px 16px;
+            border-radius: 26px;
+            cursor: pointer;
+        }
+
+        .seg button.on {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .chart-box svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            stroke-width: 1;
+        }
+
+        .chart-note {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        /* ---------- DONUT ---------- */
+        .donut-wrap {
+            position: relative;
+            width: 190px;
+            height: 190px;
+            margin: 6px auto 24px;
+        }
+
+        .donut-wrap svg {
+            width: 190px;
+            height: 190px;
+            transform: rotate(-90deg);
+            stroke-width: 11;
+        }
+
+        .donut-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .donut-center b {
+            font-size: 30px;
+        }
+
+        .donut-center span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 7px 0;
+            text-transform: capitalize;
+        }
+
+        .legend-row i {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .legend-row span {
+            margin-left: auto;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* ---------- MESSAGES ---------- */
+        .msg {
+            display: flex;
+            gap: 14px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .msg:last-child {
+            border-bottom: none;
+        }
+
+        .msg-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .msg-head {
+            display: flex;
+            gap: 12px;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+
+        .msg-head b {
+            font-size: 15px;
+        }
+
+        .msg-head span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .bubble {
+            border-radius: 14px;
+            padding: 11px 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 720px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .bubble.user {
+            background: var(--soft);
+        }
+
+        .bubble.bot {
+            background: var(--sidebar);
+            color: #fff;
+            margin-top: 8px;
+        }
+
+        .bubble small {
+            display: block;
+            font-size: 11px;
+            color: #a5a5ab;
+            margin-bottom: 3px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ---------- SETTINGS ---------- */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row span {
+            color: var(--muted);
+        }
+
+        .info-row b {
+            text-transform: capitalize;
+        }
+
+        .grid-eq {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 1150px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .grid-2,
+            .form-grid,
+            .grid-eq {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                padding: 16px;
+                gap: 6px;
+            }
+
+            .brand {
+                padding: 0 10px 0 0;
+                width: 100%;
+            }
+
+            .nav-item {
+                margin: 0;
+                padding: 10px 14px;
+            }
+
+            .nav-item.active::before,
+            .nav-divider {
+                display: none;
+            }
+
+            .nav-bottom {
+                margin-top: 0;
+                padding-top: 0;
+                display: flex;
+                gap: 6px;
+            }
+
+            .topbar,
+            .content {
+                padding-left: 22px;
+                padding-right: 22px;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            .top-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="brand">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M16 12a4 4 0 1 1-4-4v8"></path>
+                </svg>
+                Fit Verse
+            </div>
+
+            <a href="#overview" class="nav-item active" data-view="overview">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="9" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="5" rx="1.5"></rect>
+                    <rect x="14" y="12" width="7" height="9" rx="1.5"></rect>
+                    <rect x="3" y="16" width="7" height="5" rx="1.5"></rect>
+                </svg>
+                Overview
+            </a>
+            <a href="#messages" class="nav-item" data-view="messages">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <path d="M3 7l9 6 9-6"></path>
+                </svg>
+                Messages
+                <!-- MESSAGE_BADGE_PLACEHOLDER -->
+            </a>
+            <a href="#products" class="nav-item" data-view="products">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6 8h12l1.5 12h-15z"></path>
+                    <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
+                </svg>
+                Products
+            </a>
+            <a href="#add-product" class="nav-item nav-hidden" id="navAddProduct" data-view="add-product">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 8v8M8 12h8"></path>
+                </svg>
+                Add Product
+            </a>
+            <a href="#orders" class="nav-item" data-view="orders">
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2z"></path>
+                    <path d="M9 9h6M9 13h6"></path>
+                </svg>
+                Orders
+            </a>
+            <a href="#customers" class="nav-item" data-view="customers">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="9" cy="8" r="3.5"></circle>
+                    <path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path>
+                    <path d="M16 5a3.5 3.5 0 0 1 0 6.5M18 14.5a6.5 6.5 0 0 1 3.5 5.5"></path>
+                </svg>
+                Customers
+            </a>
+
+            <div class="nav-divider"></div>
+
+            <a href="#settings" class="nav-item" data-view="settings">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z">
+                    </path>
+                </svg>
+                Settings
+            </a>
+
+            <div class="nav-bottom">
+                <div class="nav-divider"></div>
+                <a href="/" class="nav-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 10l2-6h14l2 6"></path>
+                        <path d="M4 10v10h16V10"></path>
+                        <path d="M9 20v-6h6v6"></path>
+                    </svg>
+                    View Store
+                </a>
+                <a href="/logout" class="nav-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"></path>
+                        <path d="M16 17l5-5-5-5"></path>
+                        <path d="M21 12H9"></path>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN ================= -->
+        <div class="main">
+
+            <header class="topbar">
+                <div>
+                    <h1>Welcome back, <!-- ADMIN_NAME_PLACEHOLDER --></h1>
+                    <p>Here are today's stats from your online store!</p>
+                </div>
+                <div class="top-right">
+                    <label class="search">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="M20 20l-3.5-3.5"></path>
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search products" autocomplete="off">
+                    </label>
+                    <div class="user">
+                        <span class="avatar"><!-- ADMIN_INITIAL_PLACEHOLDER --></span>
+                        <span><!-- ADMIN_NAME_PLACEHOLDER --></span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content">
+
+                <!-- ALERT_PLACEHOLDER -->
+
+                <!-- ============ VIEW: OVERVIEW ============ -->
+                <section id="view-overview" class="view active">
+                    <div class="stats">
+                        <div class="stat dark">
+                            <div class="stat-head">
+                                <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                        <path d="M6 8h12l1.5 12h-15z"></path>
+                                        <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
+                                    </svg></div>
+                                <div>
+                                    <div class="stat-title">Total Products</div>
+                                    <div class="stat-sub">In your store</div>
+                                </div>
+                            </div>
+                            <div class="stat-value"><!-- STAT_PRODUCTS_PLACEHOLDER --></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-head">
+                                <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                        <path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2z"></path>
+                                        <path d="M9 9h6M9 13h6"></path>
+                                    </svg></div>
+                                <div>
+                                    <div class="stat-title">Orders</div>
+                                    <div class="stat-sub">All time</div>
+                                </div>
+                            </div>
+                            <div class="stat-value"><!-- STAT_ORDERS_PLACEHOLDER --></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-head">
+                                <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                        <circle cx="9" cy="8" r="3.5"></circle>
+                                        <path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path>
+                                        <path d="M16 5a3.5 3.5 0 0 1 0 6.5M18 14.5a6.5 6.5 0 0 1 3.5 5.5"></path>
+                                    </svg></div>
+                                <div>
+                                    <div class="stat-title">Customers</div>
+                                    <div class="stat-sub">Registered users</div>
+                                </div>
+                            </div>
+                            <div class="stat-value"><!-- STAT_USERS_PLACEHOLDER --></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-head">
+                                <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                        <path
+                                            d="M14.5 9.5c-.5-1-1.4-1.5-2.5-1.5-1.4 0-2.5.7-2.5 1.8 0 2.5 5 1.2 5 3.7 0 1.1-1.1 1.8-2.5 1.8-1.1 0-2-.5-2.5-1.5M12 6.5V8M12 16v1.5">
+                                        </path>
+                                    </svg></div>
+                                <div>
+                                    <div class="stat-title">Order Value</div>
+                                    <div class="stat-sub">Total of all orders</div>
+                                </div>
+                            </div>
+                            <div class="stat-value"><!-- STAT_VALUE_PLACEHOLDER --></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Sales Performance</h2>
+                                <div class="head-actions">
+                                    <div class="seg" id="metricSeg">
+                                        <button type="button" class="on" data-metric="sales">Order Value</button>
+                                        <button type="button" data-metric="orders">Orders</button>
+                                    </div>
+                                    <select class="pill-select" id="rangeSelect">
+                                        <option value="7">Last 7 Days</option>
+                                        <option value="14" selected>Last 14 Days</option>
+                                        <option value="30">Last 30 Days</option>
+                                    </select>
+                                    <a href="/admin/export-orders" class="btn light">Export data</a>
+                                </div>
+                            </div>
+                            <div class="chart-box"><svg viewBox="0 0 700 300" id="lineChart"></svg></div>
+                            <div class="chart-note"><!-- CHART_NOTE_PLACEHOLDER --></div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Top Categories</h2>
+                            </div>
+                            <div class="donut-wrap">
+                                <svg viewBox="0 0 100 100" id="donut"></svg>
+                                <div class="donut-center"><b id="donutTotal">0</b><span>Products</span></div>
+                            </div>
+                            <div id="legend"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Recent Orders</h2>
+                            <a href="#orders" class="btn light">View all orders</a>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Product</th>
+                                        <th>Size</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- RECENT_ORDERS_PLACEHOLDER -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ VIEW: MESSAGES ============ -->
+                <section id="view-messages" class="view">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Customer Messages</h2>
+                                <small>Chatbot se customers ki baat-cheet (latest 50) &middot;
+                                    <!-- MESSAGES_COUNT_PLACEHOLDER --> total</small>
+                            </div>
+                        </div>
+                        <!-- MESSAGES_PLACEHOLDER -->
+                    </div>
+                </section>
+
+                <!-- ============ VIEW: PRODUCTS ============ -->
+                <section id="view-products" class="view">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <h2>All Products</h2>
+                                <small><!-- PRODUCT_COUNT_PLACEHOLDER --> products in store</small>
+                            </div>
+                            <a href="#add-product" class="btn" data-view="add-product">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 5v14M5 12h14"></path>
+                                </svg>
+                                Add Product
+                            </a>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productRows">
+                                    <!-- PRODUCTS_LIST_PLACEHOLDER -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noMatch" class="empty" style="display:none;">Koi product match nahi hua.</div>
+                    </div>
+                </section>
+
+                <!-- ============ VIEW: ADD PRODUCT ============ -->
+                <section id="view-add-product" class="view">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Add New Product</h2>
+                        </div>
+                        <form method="POST" action="/admin/add-product" enctype="multipart/form-data">
+                            <div class="form-grid">
+                                <div>
+                                    <div class="form-group">
+                                        <label>Product Name</label>
+                                        <input type="text" name="name" maxlength="255"
+                                            placeholder="e.g. Itachi Uchiha Oversized T-Shirt" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Price (USD)</label>
+                                        <input type="number" step="0.01" min="0.01" name="price" placeholder="0.00"
+                                            required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Category</label>
+                                        <select name="category" id="mainCategorySelect"
+                                            onchange="handleCategoryChange(this)">
+                                            <option value="shirt">Oversized Shirt</option>
+                                            <option value="pants">Pants & Bottoms</option>
+                                            <option value="custom_new">➕ Add New Category...</option>
+                                        </select>
+                                        <div id="customCategoryBox" style="display: none; margin-top: 10px;">
+                                            <input type="text" id="customInputVal"
+                                                placeholder="Type new category name here...">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M5 12l5 5 9-10"></path>
+                                        </svg>
+                                        Save Product
+                                    </button>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Product Image (png, jpg, gif, webp - max 5MB)</label>
+                                    <div class="upload-box">
+                                        <img id="imgPreview" alt="Preview">
+                                        <span id="uploadHint">Image select karein, yahan preview dikhega</span>
+                                        <input type="file" name="image" id="imageInput"
+                                            accept=".png,.jpg,.jpeg,.gif,.webp" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- ============ VIEW: ORDERS ============ -->
+                <section id="view-orders" class="view">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <h2>All Orders</h2>
+                                <small><!-- STAT_ORDERS_PLACEHOLDER --> orders &middot; status yahan se badal sakte
+                                    ho</small>
+                            </div>
+                            <a href="/admin/export-orders" class="btn light">Export data (CSV)</a>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Customer</th>
+                                        <th>Product</th>
+                                        <th>Size</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- ALL_ORDERS_PLACEHOLDER -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ VIEW: CUSTOMERS ============ -->
+                <section id="view-customers" class="view">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Customers</h2>
+                                <small><!-- STAT_USERS_PLACEHOLDER --> registered users</small>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Orders</th>
+                                        <th>Total Spent</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- CUSTOMERS_PLACEHOLDER -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ VIEW: SETTINGS ============ -->
+                <section id="view-settings" class="view">
+                    <div class="grid-eq">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Account</h2>
+                            </div>
+                            <div class="info-row"><span>Username</span><b><!-- ADMIN_NAME_PLACEHOLDER --></b></div>
+                            <div class="info-row"><span>Role</span><b>admin</b></div>
+                            <div class="info-row"><span>Total products</span><b><!-- STAT_PRODUCTS_PLACEHOLDER --></b>
+                            </div>
+                            <div class="info-row"><span>Total orders</span><b><!-- STAT_ORDERS_PLACEHOLDER --></b></div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Change Password</h2>
+                            </div>
+                            <form method="POST" action="/admin/change-password">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" name="current_password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>New Password (min 6 characters)</label>
+                                    <input type="password" name="new_password" minlength="6" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" name="confirm_password" minlength="6" required>
+                                </div>
+                                <button type="submit" class="btn">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M5 12l5 5 9-10"></path>
+                                    </svg>
+                                    Update Password
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Data (charts ke liye) -->
+    <script id="categoryData" type="application/json"><!-- CATEGORY_JSON_PLACEHOLDER --></script>
+    <script id="chartData" type="application/json"><!-- CHART_JSON_PLACEHOLDER --></script>
+
+    <script>
+        /* ---------- Views ---------- */
+        var VIEWS = ['overview', 'messages', 'products', 'add-product', 'orders', 'customers', 'settings'];
+
+        function showView(name) {
+            if (VIEWS.indexOf(name) === -1) { name = 'overview'; }
+            VIEWS.forEach(function (v) {
+                document.getElementById('view-' + v).classList.toggle('active', v === name);
+            });
+            document.querySelectorAll('.nav-item[data-view]').forEach(function (a) {
+                a.classList.toggle('active', a.getAttribute('data-view') === name);
+            });
+
+            // Add Product sidebar link sirf tab dikhao jab wahi page khula ho
+            document.getElementById('navAddProduct').classList.toggle('nav-hidden', name !== 'add-product');
+        }
+
+        function viewFromHash() {
+            showView(location.hash.replace('#', '') || 'overview');
+        }
+        window.addEventListener('hashchange', viewFromHash);
+        viewFromHash();
+
+        /* ---------- Search (products filter) ---------- */
+        document.getElementById('searchInput').addEventListener('input', function () {
+            var q = this.value.trim().toLowerCase();
+            if (q && location.hash !== '#products') { location.hash = '#products'; }
+
+            var rows = document.querySelectorAll('#productRows tr[data-search]');
+            var shown = 0;
+            rows.forEach(function (r) {
+                var match = r.getAttribute('data-search').indexOf(q) !== -1;
+                r.style.display = match ? '' : 'none';
+                if (match) { shown++; }
+            });
+            document.getElementById('noMatch').style.display = (rows.length && !shown) ? 'block' : 'none';
+        });
+
+        /* ---------- Category select (custom category) ---------- */
+        function handleCategoryChange(selectObj) {
+            var customBox = document.getElementById('customCategoryBox');
+            var customInput = document.getElementById('customInputVal');
+            if (selectObj.value === 'custom_new') {
+                customBox.style.display = 'block';
+                selectObj.name = '';
+                customInput.name = 'category';
+                customInput.required = true;
+                customInput.focus();
+            } else {
+                customBox.style.display = 'none';
+                selectObj.name = 'category';
+                customInput.name = '';
+                customInput.required = false;
+            }
+        }
+
+        /* ---------- Image preview ---------- */
+        document.getElementById('imageInput').addEventListener('change', function () {
+            var img = document.getElementById('imgPreview');
+            var hint = document.getElementById('uploadHint');
+            if (this.files && this.files[0]) {
+                img.src = URL.createObjectURL(this.files[0]);
+                img.style.display = 'block';
+                hint.style.display = 'none';
+            }
+        });
+
+        var NS = 'http://www.w3.org/2000/svg';
+        function el(name, attrs, text) {
+            var e = document.createElementNS(NS, name);
+            for (var k in attrs) { e.setAttribute(k, attrs[k]); }
+            if (text !== undefined) { e.textContent = text; }
+            return e;
+        }
+
+        /* ---------- Donut chart (Top Categories) ---------- */
+        (function () {
+            var data = [];
+            try { data = JSON.parse(document.getElementById('categoryData').textContent) || []; } catch (e) { data = []; }
+
+            var colors = ['#18181a', '#6b6b70', '#a9a9ae', '#d4d4d8', '#8a6a43', '#c9b79c'];
+            var svg = document.getElementById('donut');
+            var legend = document.getElementById('legend');
+            var total = data.reduce(function (s, d) { return s + d.count; }, 0);
+            document.getElementById('donutTotal').textContent = total;
+
+            var r = 40, c = 2 * Math.PI * r, offset = 0;
+            svg.appendChild(el('circle', { cx: 50, cy: 50, r: r, stroke: '#efefef' }));
+
+            if (!total) {
+                legend.innerHTML = '<div class="empty" style="padding:10px 0;">No products yet</div>';
+                return;
+            }
+
+            data.forEach(function (d, i) {
+                var len = (d.count / total) * c;
+                svg.appendChild(el('circle', {
+                    cx: 50, cy: 50, r: r, stroke: colors[i % colors.length],
+                    'stroke-dasharray': Math.max(len - 1.2, 0) + ' ' + c,
+                    'stroke-dashoffset': -offset
+                }));
+                offset += len;
+
+                var row = document.createElement('div');
+                row.className = 'legend-row';
+                var dot = document.createElement('i');
+                dot.style.background = colors[i % colors.length];
+                var cnt = document.createElement('span');
+                cnt.textContent = d.count;
+                row.appendChild(dot);
+                row.appendChild(document.createTextNode(d.name));
+                row.appendChild(cnt);
+                legend.appendChild(row);
+            });
+        })();
+
+        /* ---------- Sales Performance (line chart) ---------- */
+        (function () {
+            var raw = { labels: [], sales: [], orders: [] };
+            try { raw = JSON.parse(document.getElementById('chartData').textContent) || raw; } catch (e) { }
+
+            var svg = document.getElementById('lineChart');
+            var metric = 'sales', range = 14;
+            var W = 700, H = 300, pl = 54, pr = 18, pt = 18, pb = 36;
+
+            function niceMax(v) {
+                if (v <= 0) { return 4; }
+                var p = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
+                var n = v / p;
+                var m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 4 ? 4 : n <= 5 ? 5 : 10;
+                return m * p;
+            }
+
+            function fmt(v) {
+                if (metric === 'sales') { return '$' + (v >= 1000 ? (v / 1000).toFixed(v % 1000 ? 1 : 0) + 'k' : Math.round(v)); }
+                return String(Math.round(v));
+            }
+
+            function draw() {
+                svg.innerHTML = '';
+                var labels = raw.labels.slice(-range);
+                var vals = raw[metric].slice(-range);
+                var n = labels.length;
+                if (!n) { return; }
+
+                var max = niceMax(Math.max.apply(null, vals));
+                var plotH = H - pt - pb, plotW = W - pl - pr;
+
+                for (var i = 0; i <= 4; i++) {
+                    var y = pt + plotH * (1 - i / 4);
+                    svg.appendChild(el('line', { x1: pl, x2: W - pr, y1: y, y2: y, stroke: '#ececee' }));
+                    svg.appendChild(el('text', { x: pl - 10, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: '#77777c', stroke: 'none' }, fmt(max * i / 4)));
+                }
+
+                var pts = vals.map(function (v, i) {
+                    return { x: pl + (n === 1 ? plotW / 2 : plotW * i / (n - 1)), y: pt + plotH * (1 - v / max) };
+                });
+
+                var step = Math.ceil(n / 7);
+                labels.forEach(function (l, i) {
+                    if (i % step === 0 || i === n - 1) {
+                        svg.appendChild(el('text', { x: pts[i].x, y: H - 12, 'text-anchor': 'middle', 'font-size': 11, fill: '#77777c', stroke: 'none' }, l));
+                    }
+                });
+
+                function clampY(y) { return Math.min(Math.max(y, pt), pt + plotH); }
+                var d = 'M' + pts[0].x + ',' + pts[0].y;
+                for (var j = 0; j < pts.length - 1; j++) {
+                    var p0 = pts[j - 1] || pts[j], p1 = pts[j], p2 = pts[j + 1], p3 = pts[j + 2] || p2;
+                    var c1x = p1.x + (p2.x - p0.x) / 6, c1y = clampY(p1.y + (p2.y - p0.y) / 6);
+                    var c2x = p2.x - (p3.x - p1.x) / 6, c2y = clampY(p2.y - (p3.y - p1.y) / 6);
+                    d += ' C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + p2.x + ',' + p2.y;
+                }
+
+                if (n > 1) {
+                    svg.appendChild(el('path', { d: d + ' L' + pts[n - 1].x + ',' + (pt + plotH) + ' L' + pts[0].x + ',' + (pt + plotH) + ' Z', fill: '#18181a', 'fill-opacity': 0.06, stroke: 'none' }));
+                }
+                svg.appendChild(el('path', { d: d, fill: 'none', stroke: '#18181a', 'stroke-width': 2.2 }));
+
+                pts.forEach(function (p, i) {
+                    var c = el('circle', { cx: p.x, cy: p.y, r: 4, fill: '#fff', stroke: '#18181a', 'stroke-width': 2 });
+                    c.appendChild(el('title', {}, labels[i] + ': ' + (metric === 'sales' ? '$' + vals[i].toFixed(2) : vals[i] + ' orders')));
+                    svg.appendChild(c);
+                });
+            }
+
+            document.querySelectorAll('#metricSeg button').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    metric = b.getAttribute('data-metric');
+                    document.querySelectorAll('#metricSeg button').forEach(function (x) { x.classList.toggle('on', x === b); });
+                    draw();
+                });
+            });
+            document.getElementById('rangeSelect').addEventListener('change', function () {
+                range = parseInt(this.value, 10);
+                draw();
+            });
+            draw();
+        })();
+    </script>
+</body>
+
+</html>
